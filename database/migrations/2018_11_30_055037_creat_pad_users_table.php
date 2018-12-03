@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUsersTable extends Migration
+class CreatPadUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('pad_users', function (Blueprint $table) {
             //自增id
             $table->increments('id');
             //工号
@@ -28,12 +28,12 @@ class CreateUsersTable extends Migration
             $table->date('ent_date')->nullable();
             //离职日期
             $table->date('dim_date')->nullable();
-            //计算机序列号
-            $table->string('pc_num')->nullable();
+            //pad型号
+            $table->string('pad_type')->nullable();
+            //pad序列号
+            $table->string('pad_num')->nullable();
             //借用期限
-            $table->string('pc_date')->nullable();
-            //计算机型号
-            $table->string('pc_type')->nullable();
+            $table->string('pad_date')->nullable();
             //领用日期
             $table->date('get_date')->nullable();
             //归还日期

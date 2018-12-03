@@ -28,6 +28,18 @@ Route::post('user/editUser/{id}','UserController@editUser');
 //删
 Route::post('user/deleteUser','UserController@deleteUser');
 
+//pad借用信息接口
+//获取人员信息（全部）
+Route::get('padUser/getAllPadUserInfos','PadUserController@getAllPadUserInfos');
+//增
+Route::post('padUser/addPadUser','PadUserController@addPadUserInfo');
+//查指定id
+Route::post('padUser/getPadUserAsId/{id}','PadUserController@getPadUserAsId');
+//改
+Route::post('padUser/editPadUser/{id}','PadUserController@editPadUser');
+//删
+Route::post('padUser/deletePadUser','PadUserController@deletePadUser');
+
 
 //电脑信息接口
 //获取人员信息

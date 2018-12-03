@@ -322,21 +322,21 @@ class PadController extends Controller
                 ]
                 );
                 //人员表更新  (添加归还日期)
-                $flag2 = DB::table('users')
+                $flag2 = DB::table('pad_users')
                 ->where('id',$id)
                 ->update(
                 [
                     'back_date'     => now(),
                 ]
                 );
-            	$users = DB::table('users')
-	            ->select('id','name','job_num','dept','job','ent_date','dim_date','pad_num','pad_type','pc_date','get_date','back_date','description')
+            	$pad_users = DB::table('pad_users')
+	            ->select('id','name','job_num','dept','job','ent_date','dim_date','pad_num','pad_type','pad_date','get_date','back_date','description')
 	            ->where('flag','1')
 	            ->get()
 	            ->toArray();
             
             
-            return Response::response(200,'pad归还成功',$users);
+            return Response::response(200,'pad归还成功',$pad_users);
         }
         catch (Exception $e) 
         {

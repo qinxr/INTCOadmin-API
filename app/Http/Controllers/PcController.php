@@ -69,6 +69,8 @@ class PcController extends Controller
             $pc_type = $request->input('pc_type');
             //计算机状态
             $pc_state = $request->input('pc_state');
+            //计算机状态
+            $description = $request->input('description');
             //判断是否为空
             if($pc_num!= ''&&$pc_type!= ''&&$pc_state!= ''&&$num!= ''&&$pc_detail!= '')
             {
@@ -82,6 +84,7 @@ class PcController extends Controller
                     'pc_detail'     => $pc_detail,
                     'pc_type'     => $pc_type,
                     'pc_state'     => $pc_state,
+                    'description'     => $description,
                 ]
                 );
                	$pcs = DB::table('pc_admin')
@@ -139,41 +142,41 @@ class PcController extends Controller
         }
     }
     
-    /**
-     * 获取指定计算机(根据id).
-     * get
-     * @access public
-     * @param  num      序列号
-     * @return 200      查询信息成功 
-     *                  指定id信息数据
-     *         212      信息查询失败 未输入id
-     *         213      信息查询失败 指定id信息未找到
-     *         520      服务器端处理失败:指定id信息查询
-     */
-    public function getPcAsNum($num = null)
-    {
-        try 
-        {
-            
-            if(!$num)
-            {
-                return Response::response(212,'指定num信息查询失败,未输入指定信息');
-            }
-            $pc = DB::table('pc_admin')
-                ->where('id',$num)
-                ->select('pc_num','pc_detail','pc_type','pc_state','description')
-                ->first();
-            if(!$pc)
-            {
-                return Response::response(213,'指定num信息查询失败,未找到指定id信息');
-            }
-            return Response::response(200,'指定型号信息查询成功',$pc);
-        }
-        catch (Exception $e) 
-        {
-            return Response::response(520,'服务器端处理失败:指定num信息查询');
-        }
-    }
+//  /**
+//   * 获取指定计算机(根据id).
+//   * get
+//   * @access public
+//   * @param  num      序列号
+//   * @return 200      查询信息成功 
+//   *                  指定id信息数据
+//   *         212      信息查询失败 未输入id
+//   *         213      信息查询失败 指定id信息未找到
+//   *         520      服务器端处理失败:指定id信息查询
+//   */
+//  public function getPcAsNum($num = null)
+//  {
+//      try 
+//      {
+//          
+//          if(!$num)
+//          {
+//              return Response::response(212,'指定num信息查询失败,未输入指定信息');
+//          }
+//          $pc = DB::table('pc_admin')
+//              ->where('id',$num)
+//              ->select('pc_num','pc_detail','pc_type','pc_state','description')
+//              ->first();
+//          if(!$pc)
+//          {
+//              return Response::response(213,'指定num信息查询失败,未找到指定id信息');
+//          }
+//          return Response::response(200,'指定型号信息查询成功',$pc);
+//      }
+//      catch (Exception $e) 
+//      {
+//          return Response::response(520,'服务器端处理失败:指定num信息查询');
+//      }
+//  }
     
     
 	/**
