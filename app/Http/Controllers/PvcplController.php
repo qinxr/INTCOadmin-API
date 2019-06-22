@@ -10,7 +10,7 @@ use App\Http\Controllers\ResponseController as Response;
 class PvcplController extends Controller
 {
     /**
-     * 配料表增、删、改、查 相关接口
+     * 配料表增、改、查 相关接口
      *
      * @return void
      */
