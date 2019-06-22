@@ -29,6 +29,8 @@ Route::post('user/editUser/{id}','UserController@editUser');
 Route::post('user/deleteUser','UserController@deleteUser');
 
 //pad借用信息接口
+//获取人员信息(部分)
+Route::get('user/getPadUserInfos','PadUserController@getPadUserInfos');
 //获取人员信息（全部）
 Route::get('padUser/getAllPadUserInfos','PadUserController@getAllPadUserInfos');
 //增
@@ -73,3 +75,16 @@ Route::post('pad/editPad/{id}','PadController@editPad');
 Route::post('pad/deletePad','PadController@deletePad');
 //归还
 Route::post('pad/backPad','PadController@backPad');
+
+
+//配料信息接口
+//获取展示列表信息
+Route::get('pladmin/getPlInfos','PvcplController@getPlInfos');
+//增
+Route::post('pladmin/addPlInfo','PvcplController@addPlInfo');
+//查指定id
+Route::post('pladmin/getPlAsId/{id}','PvcplController@getPlAsId');
+//改
+Route::post('pladmin/editpl/{id}','PvcplController@editpl');
+//删
+//Route::post('padUser/deletePadUser','PadUserController@deletePadUser');

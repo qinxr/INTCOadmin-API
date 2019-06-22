@@ -10,7 +10,7 @@ use App\Http\Controllers\ResponseController as Response;
 class PadUserController extends Controller
 {
     /**
-     * 人员信息增、删、改、查 相关接口
+     * pad借用信息增、删、改、查 相关接口
      *
      * @return void
      */
@@ -34,40 +34,41 @@ class PadUserController extends Controller
             ->where('flag','1')
             ->get()
             ->toArray();
-            Log::info('人员信息获取');
-            return Response::response(200,'人员信息获取成功',$pad_users);
+            Log::info('pad借用信息获取');
+            return Response::response(200,'pad借用信息获取成功',$pad_users);
         }
         catch (Exception $e) 
         {
-            return Response::response(520,'人员信息获取失败');
+            return Response::response(520,'pad借用信息获取失败');
         }
     }
-//  /**
-//   * 获取用户信息
-//   *
-//   * @return 用户信息
-//   */
-//  public function getUserInfos()
-//  {
-//      
-//      try 
-//      {
-//          $pad_users = DB::table('pad_users')
-//          ->select('id','name','job_num','dept','job','ent_date','dim_date','pad_num','pad_type','pad_date','get_date','back_date','description')
-//          ->where('back_date',null)
-//          ->where('flag','1')
-//          ->get()
-//          ->toArray();
-//          Log::info('人员信息获取');
-//          return Response::response(200,'人员信息获取成功',$pad_users);
-//      }
-//      catch (Exception $e) 
-//      {
-//          return Response::response(520,'人员信息获取失败');
-//      }
-//  }
     /**
-     * 新增人员信息.
+     * 获取用户信息
+     *
+     * @return 用户信息
+     */
+    public function getPadUserInfos()
+    {
+        
+        try 
+        {
+            $pad_users = DB::table('pad_users')
+            ->select('id','name','job_num','dept','job','ent_date','dim_date','pad_num','pad_type','pad_date','get_date','back_date','description')
+            ->where('pad_date','1')
+            ->where('back_date',NULL)
+            ->where('flag','1')
+            ->get()
+            ->toArray();
+            Log::info('pad借用信息获取');
+            return Response::response(200,'pad借用信息获取成功',$pad_users);
+        }
+        catch (Exception $e) 
+        {
+            return Response::response(520,'pad借用信息获取失败');
+        }
+    }
+    /**
+     * 新增pad借用信息.
      * post
      * @access public 
      * @param  name			姓名
@@ -81,9 +82,9 @@ class PadUserController extends Controller
      * @param  get_date		借用日期 
      * @param  back_date	归还日期
      * @param  description	描述
-     * @return 200      	人员信息增加成功 
-     *         210      	人员信息增加失败
-     *         520      	服务器端处理失败:人员信息新增
+     * @return 200      	pad借用信息增加成功 
+     *         210      	pad借用信息增加失败
+     *         520      	服务器端处理失败:pad借用信息新增
      *         211      	项目新增失败：缺少必要参数
      */
     public function addPadUserInfo(Request $request)
@@ -155,22 +156,22 @@ class PadUserController extends Controller
             	->where('flag','1')
            	 	->get()
             	->toArray();
-                Log::info('新增人员信息:'.$name.'领用电脑');
-                return Response::response(200,'人员信息新增成功',$pad_users);
+                Log::info('新增pad借用信息:'.$name.'领用电脑');
+                return Response::response(200,'pad借用信息新增成功',$pad_users);
             }
             else
             {
-                return Response::response(211,'人员信息新增失败：缺少必要参数');
+                return Response::response(211,'pad借用信息新增失败：缺少必要参数');
             }
         }
         catch (Exception $e) 
         {
-            return Response::response(520,'服务器端处理失败:人员信息新增');
+            return Response::response(520,'服务器端处理失败:pad借用信息新增');
         }
     }
     
     /**
-     * 获取指定人员信息.
+     * 获取指定pad借用信息.
      * get
      * @access public
      * @param  integer  id  项目id
@@ -205,7 +206,7 @@ class PadUserController extends Controller
         }
     }
 	/**
-     * 修改人员信息.
+     * 修改pad借用信息.
      * post
      * @access public 
      * @param  name			姓名
@@ -218,11 +219,11 @@ class PadUserController extends Controller
      * @param  pad_type		计算机型号
      * @param  get_date		借用日期 
      * @param  back_date	归还日期
-     * @return 200      人员信息修改成功 
-     *                  所有人员信息信息
-     *         520      服务器端处理失败:人员信息修改
-     *         211      人员信息修改失败：缺少必要参数
-     *         212      人员信息修改失败：缺少指定id
+     * @return 200      pad借用信息修改成功 
+     *                  所有pad借用信息信息
+     *         520      服务器端处理失败:pad借用信息修改
+     *         211      pad借用信息修改失败：缺少必要参数
+     *         212      pad借用信息修改失败：缺少指定id
      */
     public function editPadUser(Request $request,$id=null)
     {
@@ -231,7 +232,7 @@ class PadUserController extends Controller
 //         
             if(!$id)
             {
-                return Response::response(212,'人员信息修改失败,未输入指定id');
+                return Response::response(212,'pad借用信息修改失败,未输入指定id');
             }
             //姓名 必须输入
             $name = $request->input('name');
@@ -282,17 +283,17 @@ class PadUserController extends Controller
             	->where('flag','1')
            	 	->get()
             	->toArray();
-                Log::info('人员信息修改:'.$name);
-                return Response::response(200,'人员信息修改成功',$pad_users);
+                Log::info('pad借用信息修改:'.$name);
+                return Response::response(200,'pad借用信息修改成功',$pad_users);
             }
             else
             {
-                return Response::response(211,'人员信息修改失败：缺少必要参数');
+                return Response::response(211,'pad借用信息修改失败：缺少必要参数');
             }
         }
         catch (Exception $e) 
         {
-            return Response::response(520,'服务器端处理失败:人员信息修改');
+            return Response::response(520,'服务器端处理失败:pad借用信息修改');
         }
     }
 	/**
@@ -300,10 +301,10 @@ class PadUserController extends Controller
      * post
      * @access public
      * @param  integer  id  
-     * @return 200      人员信息删除成功 
-     *                  所有人员信息数据
-     *         212      人员信息删除失败 未输入指定id
-     *         520      服务器端处理失败:人员信息删除
+     * @return 200      pad借用信息删除成功 
+     *                  所有pad借用信息数据
+     *         212      pad借用信息删除失败 未输入指定id
+     *         520      服务器端处理失败:pad借用信息删除
      */
     public function deletePadUser(Request $request)
     {
@@ -312,7 +313,7 @@ class PadUserController extends Controller
             $delete_id = $request->input('delete_id');
             if(!$delete_id)
             {
-                return Response::response(212,'人员信息删除失败,未输入指定id');
+                return Response::response(212,'pad借用信息删除失败,未输入指定id');
             }
            
             
@@ -333,11 +334,11 @@ class PadUserController extends Controller
             	->toArray();
             
             
-            return Response::response(200,'人员信息删除成功',$pad_users);
+            return Response::response(200,'pad借用信息删除成功',$pad_users);
         }
         catch (Exception $e) 
         {
-            return Response::response(520,'服务器端处理失败:指定人员信息删除');
+            return Response::response(520,'服务器端处理失败:指定pad借用信息删除');
         }
     }
 

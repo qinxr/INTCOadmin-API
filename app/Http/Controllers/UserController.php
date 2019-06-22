@@ -55,6 +55,7 @@ class UserController extends Controller
             $users = DB::table('users')
             ->select('id','name','job_num','dept','job','ent_date','dim_date','pc_num','pc_type','pc_date','get_date','back_date','description')
             ->where('pc_date','1')
+            ->where('back_date',NULL)
             ->where('flag','1')
             ->get()
             ->toArray();
