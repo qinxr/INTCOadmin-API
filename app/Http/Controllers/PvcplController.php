@@ -20,18 +20,18 @@ class PvcplController extends Controller
     }
 
      /**
-     * 获取配料信息
+     * 获取配料信息,根据厂次
      *
      * @return 配料信息  ID、日期、班次、批号
      */
-    public function getPlInfos()
+    public function getPlInfos($factory = null)
     {
         
         try 
         {
             $peiliao = DB::table('pvc_peiliao')
             ->select('id','factory','shift','lotNumber')
-//          ->where('flag','1')
+            ->where('factory',$factory)
             ->get()
             ->toArray();
             Log::info('配料表信息获取');
@@ -40,6 +40,59 @@ class PvcplController extends Controller
         catch (Exception $e) 
         {
             return Response::response(520,'配料表信息获取失败');
+        }
+    }
+     /**
+     * 获取配料信息
+     *
+     * @return 配料信息  ID、日期、班次、批号
+     */
+    public function getPlnames()
+    {
+        
+        try 
+        {
+            $plname = DB::table('pvc_plname')
+            ->get()
+            ->toArray();
+            Log::info('配方表信息获取');
+            return Response::response(200,'配方表信息获取成功',$plname);
+        }
+        catch (Exception $e) 
+        {
+            return Response::response(520,'配方表信息获取失败');
+        }
+    }
+     /**
+     * 根据名称获取配料信息
+     *
+     * @return 
+     */
+    public function getPlAsName($name = null)
+    {
+        try 
+        {
+            
+            if(!$name)
+            {
+                return Response::response(212,'指定名称信息查询失败,未输入指定id');
+            }
+                
+                $plname = DB::table('pvc_yldata')
+                ->where('ylname',$name)
+            	->get()
+           		->toArray();
+           			
+            
+            if(!$plname)
+            {
+                return Response::response(213,'指定名称信息查询失败,未找到指定名称信息');
+            }
+            return Response::response(200,'指定名称信息查询成功',$plname);
+        }
+        catch (Exception $e) 
+        {
+            return Response::response(520,'服务器端处理失败:指定名称信息查询');
         }
     }
     /**
@@ -101,6 +154,8 @@ class PvcplController extends Controller
             $totalCount = $request->input('totalCount');
             //搅拌总时长  必须输入
             $totalTime = $request->input('totalTime');
+            //配料原料名  可选输入
+            $ylname = $request->input('ylname');
             //粘度   必须输入
             $visDegree = $request->input('visDegree');
             //细度      必须输入
@@ -173,7 +228,15 @@ class PvcplController extends Controller
             	->select('id')
             	->orderBy('id', 'DESC')
                 ->first();
-             		//原料数据遍历存储
+             	//原料数据遍历存储
+             	if($ylname!= ''){
+             		$flagname = DB::table('pvc_plname')
+		            ->insert(
+		            [
+		                'ylname'     => $ylname,
+		            ]		
+					);
+             	}
            		$num = count($ylData);
            		 for($i=0;$i<$num;$i++){
            		 	
@@ -209,11 +272,13 @@ class PvcplController extends Controller
 	                    'deliveryCount'     => $deliveryCount,
 	                    'formulator'     => $formulator,
 	                    'reviewer'     => $reviewer,
+	                    'ylname'     => $ylname,//原料名称
+	                    
 	                ]		
 					);
             	}
            		}
-           		//原料数据遍历存储
+           		//检测数据遍历存储
            		$num2=count($det);
            		 for($j=0;$j<$num2;$j++){
            		 	

@@ -32,6 +32,8 @@ class CreatePvcYldataTable extends Migration
             $table->string('formulator')->nullable();
             //复核人
             $table->string('reviewer')->nullable();
+            //配方名
+            $table->string('ylname')->nullable();
         });
     }
 
