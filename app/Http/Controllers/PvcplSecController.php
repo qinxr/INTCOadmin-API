@@ -30,7 +30,7 @@ class PvcplSecController extends Controller
         try
         {
             $peiliao = DB::table('pvcpl_second')
-            ->select('id','factory','lotNumber')
+            ->select('id','factory','shift','lotNumber')
             ->where('factory',$factory)
             ->get()
             ->toArray();
