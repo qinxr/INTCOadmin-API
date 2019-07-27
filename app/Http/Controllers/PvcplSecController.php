@@ -22,7 +22,7 @@ class PvcplSecController extends Controller
      /**
      * 获取配料信息,根据厂次
      *
-     * @return 配料信息  ID、日期、批号
+     * @return 配料信息  ID、日期、班次、批号
      */
     public function getPlInfos($factory = null)
     {
@@ -100,6 +100,8 @@ class PvcplSecController extends Controller
      * post
      * @access public
      * @param  formDate		    日期
+     * @param  shift		    班次
+     * @param  factory		    厂区
      * @param  lotNumber	    批号1
      * @param  mixerNumber	    搅拌机号
      * @param  formulator	    配料员
@@ -155,6 +157,10 @@ class PvcplSecController extends Controller
 //
             //日期必须输入
             $formDate = $request->input('formDate');
+            //班次必须输入
+            $shift = $request->input('shift');
+            //厂区必须输入
+            $factory = $request->input('factory');
             //批号1必须输入
             $lotNumber = $request->input('lotNumber');
             //搅拌机号必须输入
@@ -244,7 +250,7 @@ class PvcplSecController extends Controller
 
 
             //判断是否为空
-            if($formDate!= ''&&$lotNumber!= ''&&$mixerNumber!= ''&&$formulator!= ''&&$totalCount!= ''&&$rotateSpeed!=''&&$totalTime!= ''&&$stirStartTime!= ''&&$stirEndTime!= ''&&$startCps!= ''&&$endCps!= ''&&$cpsFlag!= ''&&$cpsInspector!= ''&&$cpsReviewer!= '')
+            if($formDate!= ''&&$shift!= ''&&$factory!= ''&&$lotNumber!= ''&&$mixerNumber!= ''&&$formulator!= ''&&$totalCount!= ''&&$rotateSpeed!=''&&$totalTime!= ''&&$stirStartTime!= ''&&$stirEndTime!= ''&&$startCps!= ''&&$endCps!= ''&&$cpsFlag!= ''&&$cpsInspector!= ''&&$cpsReviewer!= '')
             {
                 //项目类型插入数据库
                 $flag = DB::table('pvcpl_second')
@@ -252,6 +258,8 @@ class PvcplSecController extends Controller
                 [
 
                     'formDate'     => $formDate,
+                    'shift'     => $shift,
+                    'factory'     => $factory,
                     'lotNumber'     => $lotNumber,
                     'mixerNumber'     => $mixerNumber,
                     'formulator'     => $formulator,
@@ -474,6 +482,8 @@ class PvcplSecController extends Controller
      * post
      * @access public
      * @param  formDate		    日期
+     * @param  shift		    班次
+     * @param  factory		    厂区
      * @param  lotNumber	    批号1
      * @param  mixerNumber	    搅拌机号
      * @param  formulator	    配料员
@@ -532,8 +542,12 @@ class PvcplSecController extends Controller
             {
                 return Response::response(212,'pl修改失败,未输入指定id');
             }
-            //日期必须输入
+           //日期必须输入
            $formDate = $request->input('formDate');
+           //班次必须输入
+           $shift = $request->input('shift');
+           //厂区必须输入
+           $factory = $request->input('factory');
            //批号1必须输入
            $lotNumber = $request->input('lotNumber');
            //搅拌机号必须输入
@@ -621,7 +635,7 @@ class PvcplSecController extends Controller
 
 
 
-            if($formDate!= ''&&$lotNumber!= ''&&$mixerNumber!= ''&&$formulator!= ''&&$totalCount!= ''&&$rotateSpeed!=''&&$totalTime!= ''&&$stirStartTime!= ''&&$stirEndTime!= ''&&$startCps!= ''&&$endCps!= ''&&$cpsFlag!= ''&&$cpsInspector!= ''&&$cpsReviewer!= '')
+            if($formDate!= ''&&$shift!= ''&&$factory!= ''&&$lotNumber!= ''&&$mixerNumber!= ''&&$formulator!= ''&&$totalCount!= ''&&$rotateSpeed!=''&&$totalTime!= ''&&$stirStartTime!= ''&&$stirEndTime!= ''&&$startCps!= ''&&$endCps!= ''&&$cpsFlag!= ''&&$cpsInspector!= ''&&$cpsReviewer!= '')
             {
 
                 //更新 数据库
@@ -630,6 +644,8 @@ class PvcplSecController extends Controller
                 ->update(
                 [
                 	'formDate'     => $formDate,
+                    'shift'     => $shift,
+                    'factory'     => $factory,
                 	'lotNumber'     => $lotNumber,
                 	'mixerNumber'     => $mixerNumber,
                 	'formulator'     => $formulator,
