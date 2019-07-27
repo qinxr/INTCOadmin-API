@@ -16,6 +16,8 @@ class CreateYldataSecondTable extends Migration
         Schema::create('yldata_second', function (Blueprint $table) {
             //自增id
             $table->increments('id');
+            //配料表ID
+            $table->string('plid')->nullable();
             //原料名称
             $table->string('rawName')->nullable();
             //批号2

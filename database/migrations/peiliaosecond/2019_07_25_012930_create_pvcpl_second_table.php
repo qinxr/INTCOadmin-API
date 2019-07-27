@@ -20,6 +20,10 @@ class CreatePvcplSecondTable extends Migration
             $table->date('formDate')->nullable();
             //批号一
             $table->string('lotNumber')->nullable();
+             //班次
+            $table->string('shift')->nullable();
+            //厂区
+            $table->string('factory')->nullable();
             //搅拌机号
             $table->string('mixerNumber')->nullable();
             //配料员

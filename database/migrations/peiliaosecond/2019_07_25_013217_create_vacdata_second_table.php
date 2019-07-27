@@ -16,6 +16,8 @@ class CreateVacdataSecondTable extends Migration
         Schema::create('vacdata_second', function (Blueprint $table) {
             //自增id
             $table->increments('id');
+            //配料表ID
+            $table->string('plid')->nullable();
             //真空罐号
             $table->string('vacuumNumber')->nullable();
             //抽真空次数
