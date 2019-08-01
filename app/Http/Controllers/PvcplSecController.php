@@ -335,7 +335,7 @@ class PvcplSecController extends Controller
 	   				$description = $ylData[$i]['description'];
 
 	   			//数据存储
-	   			if($rawName!= ''&&$lotNumber!= ''&&$deliveryCount!= ''&&$startTime!= ''&&$endTime!= ''&&$description!= '')
+	   			if($rawName!= '')
             	{
 
 	                $flag1 = DB::table('yldata_second')
@@ -378,7 +378,7 @@ class PvcplSecController extends Controller
                     $vacOperator= $vacData[$j]['vacOperator'];
 
 	   			//数据存储
-	   			if($vacuumNumber!= ''&&$vacuumCount!= ''&&$vacStartTime!= ''&&$vacEndTime!= ''&&$vacuumMpa!= ''&&$vacOperator!= '')
+	   			if($vacuumNumber!= '')
             	{
 
                 $flag2 = DB::table('vacdata_second')
@@ -392,7 +392,7 @@ class PvcplSecController extends Controller
                     'vacStartTime'     => $vacStartTime,
                     'vacEndTime'     => $vacEndTime,
                     'vacuumMpa'     => $vacuumMpa,
-                    'vacuumNumber'     => $vacOperator,
+                    'vacOperator'     => $vacOperator,
                 ]
 				);
             	}
@@ -452,15 +452,17 @@ class PvcplSecController extends Controller
             	->get()
            		->first();
            		$yuanliao = DB::table('yldata_second')
+           		->select('rawName','lotNumber','deliveryCount','startTime','endTime','description')
             	->where('plid',$id)
             	->get()
            		->toArray();
-           		$tem = DB::table('vacdata_second')
+           		$vac = DB::table('vacdata_second')
+           		->select('vacuumNumber','vacuumCount','vacStartTime','vacEndTime','vacuumMpa','vacOperator')
             	->where('plid',$id)
             	->get()
            		->toArray();
 
-				$pl=array($peiliao,$yuanliao,$tem);
+				$pl=array($peiliao,$yuanliao,$vac);
 
 
             if(!$peiliao)
@@ -540,7 +542,7 @@ class PvcplSecController extends Controller
 //
             if(!$id)
             {
-                return Response::response(212,'pl修改失败,未输入指定id');
+                return Response::response(212,'修改失败,未输入指定id');
             }
            //日期必须输入
            $formDate = $request->input('formDate');
@@ -629,7 +631,7 @@ class PvcplSecController extends Controller
            //带班长
            $outputReviewer = $request->input('outputReviewer');
            //原料数据
-           $ylData = $request->input('ylData');
+             $ylData = $request->input('ylData');
            //真空脱泡数据
            $vacData = $request->input('vacData');
 
@@ -693,7 +695,7 @@ class PvcplSecController extends Controller
            		//原料数据遍历存储
            		$idyl = DB::table('yldata_second')
            		->select('id')
-            	->where('ylid',$id)
+            	->where('plid',$id)
             	->get()
            		->toArray();
 
@@ -715,7 +717,7 @@ class PvcplSecController extends Controller
 
 	   			//数据更新
                 $flag1 = DB::table('yldata_second')
-                ->where('id',$idyl[$i])
+                ->where('id',$idyl[$i]->id)
                 ->update(
                 [
 
@@ -729,9 +731,9 @@ class PvcplSecController extends Controller
 				);
            		};
            		//原料检测数据遍历存储
-           		$idtem = DB::table('yldata_second')
+           		$idtem = DB::table('vacdata_second')
            		->select('id')
-            	->where('ylid',$id)
+            	->where('plid',$id)
             	->get()
            		->toArray();
 
@@ -753,7 +755,7 @@ class PvcplSecController extends Controller
 
 	   			//数据更新
                 $flag2 = DB::table('vacdata_second')
-                ->where('id',$idtem[$j])
+                ->where('id',$idtem[$j]->id)
                 ->update(
                 [
 
@@ -762,23 +764,30 @@ class PvcplSecController extends Controller
                    'vacStartTime'     => $vacStartTime,
                    'vacEndTime'     => $vacEndTime,
                    'vacuumMpa'     => $vacuumMpa,
-                   'vacuumNumber'     => $vacOperator,
+                   'vacOperator'     => $vacOperator,
                 ]
 				);
-           		$yuanliao = DB::table('yldata_second')
-            	->where('ylid',$peiliao->id)
-            	->get()
-           		->toArray();
-           		$tem = DB::table('vacdata_second')
-            	->where('ylid',$peiliao->id)
-            	->get()
-           		->toArray();
 
            		}
 
+				
+				$peiliao = DB::table('pvcpl_second')
+                ->where('id',$id)
+            	->get()
+           		->first();
+           		$yuanliao = DB::table('yldata_second')
+            	->where('plid',$id)
+            	->get()
+           		->toArray();
+           		$vac = DB::table('vacdata_second')
+            	->where('plid',$id)
+            	->get()
+           		->toArray();
+
+				$pl=array($peiliao,$yuanliao,$vac);
 
 
-                return Response::response(200,'pl修改成功',$peiliao);
+                return Response::response(200,'pl修改成功',$pl);
             }
             else
             {

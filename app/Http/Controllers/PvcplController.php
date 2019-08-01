@@ -515,7 +515,7 @@ class PvcplController extends Controller
            		//原料数据遍历存储
            		$idyl = DB::table('pvc_yldata')
            		->select('id')
-            	->where('ylid',$id)
+            	->where('plid',$id)
             	->get()
            		->toArray();
 
@@ -538,7 +538,7 @@ class PvcplController extends Controller
 	   				$reviewer = $ylData[$i]['reviewer'];
 	   			//数据更新
                 $flag1 = DB::table('pvc_yldata')
-                ->where('id',$idyl[$i])
+                ->where('id',$idyl[$i]->id)
                 ->update(
                 [
 
@@ -555,7 +555,7 @@ class PvcplController extends Controller
            		//原料检测数据遍历存储
            		$idtem = DB::table('pvc_yldata')
            		->select('id')
-            	->where('ylid',$id)
+            	->where('plid',$id)
             	->get()
            		->toArray();
 
@@ -563,35 +563,39 @@ class PvcplController extends Controller
            		 for($j=0;$j<$num2;$j++){
 
 				    //原料名称
-	   				$detTime= $det[$j]->detTime;
+	   				$detTime= $det[$j]['dettime'];
 	   				//原料批号
-	   				$detTemperature= $det[$j]->detTemperature;
+	   				$detTemperature= $det[$j]['detTemperature'];
 	   			//数据更新
                 $flag2 = DB::table('pvc_detdata')
-                ->where('id',$idtem[$j])
+                ->where('id',$idtem[$j]->id)
                 ->update(
                 [
 
-                    'detTime'     => $detTime,
+                    'dettime'     => $detTime,
                     'detTemperature'     => $detTemperature,
                 ]
 				);
+           		}
+				$peiliao = DB::table('pvc_peiliao')
+            	->where('id',$id)
+            	->get()
+           		->toArray();
            		$yuanliao = DB::table('pvc_yldata')
-            	->where('ylid',$peiliao->id)
+            	->where('plid',$id)
             	->get()
            		->toArray();
            		$tem = DB::table('pvc_detdata')
-            	->where('ylid',$peiliao->id)
+            	->where('plid',$id)
             	->get()
            		->toArray();
-           		$pl->plInfo=$peiliao;
-           		$pl->ylInfo=$yuanliao;
-           		$pl->temInfo=$tem;
-           		}
+           		
+           		
+           		$pl=array($peiliao,$yuanliao,$tem);
 
 
 
-                return Response::response(200,'pl修改成功',$peiliao);
+                return Response::response(200,'pl修改成功',$pl);
             }
             else
             {
