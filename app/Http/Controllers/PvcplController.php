@@ -20,7 +20,7 @@ class PvcplController extends Controller
     }
 
      /**
-     * 获取配料信息,根据厂次
+     * 获取配料信息,根据厂次，时间倒序排列
      *
      * @return 配料信息  ID、日期、班次、批号
      */
@@ -30,8 +30,33 @@ class PvcplController extends Controller
         try
         {
             $peiliao = DB::table('pvc_peiliao')
-            ->select('id','factory','shift','lotNumber')
+            ->select('id','factory','formDate','shift','lotNumber','stirStartTime','stirEndTime','restEndTime','restTankNumber')
             ->where('factory',$factory)
+            ->orderBy('formDate', 'DESC')
+            ->get()
+            ->toArray();
+            Log::info('配料表信息获取');
+            return Response::response(200,'配料表信息获取成功',$peiliao);
+        }
+        catch (Exception $e)
+        {
+            return Response::response(520,'配料表信息获取失败');
+        }
+    }
+    /**
+     * 获取配料信息,根据厂次，时间正序排列
+     *
+     * @return 配料信息  ID、日期、班次、批号
+     */
+    public function getPlInfosAsc($factory = null)
+    {
+
+        try
+        {
+            $peiliao = DB::table('pvc_peiliao')
+            ->select('id','factory','formDate','shift','lotNumber','stirStartTime','stirEndTime','restEndTime','restTankNumber')
+            ->where('factory',$factory)
+            ->orderBy('formDate', 'ASC')
             ->get()
             ->toArray();
             Log::info('配料表信息获取');
@@ -47,12 +72,13 @@ class PvcplController extends Controller
      *
      * @return 配料信息  ID、日期、班次、批号
      */
-    public function getPlnames()
+    public function getPlnames($factory = null)
     {
 
         try
         {
             $plname = DB::table('pvc_plname')
+            ->where('factory',$factory)
             ->get()
             ->toArray();
             Log::info('配方表信息获取');
@@ -68,18 +94,18 @@ class PvcplController extends Controller
      *
      * @return
      */
-    public function getPlAsName($name = null)
+    public function getPlAsName($id = null)
     {
         try
         {
 
-            if(!$name)
+            if(!$id)
             {
                 return Response::response(212,'指定名称信息查询失败,未输入指定id');
             }
 
                 $plname = DB::table('pvc_yldata')
-                ->where('ylname',$name)
+                ->where('ylname',$id)
             	->get()
            		->toArray();
 
@@ -189,142 +215,162 @@ class PvcplController extends Controller
             //检测列表
             $det = $request->input('detTime');
 
+            //判断是否已存在
+            // $number = DB::table('pvc_peiliao')
+            // ->select('lotNumber')
+            // ->where('lotNumber',$lotNumber)
+            // ->get()
+            // ->toArray();
+            // if($number){
 
-            //判断是否为空
-            if($formDate!= ''&&$shift!= ''&&$factory!= ''&&$stirStartTime!= ''&&$stirEndTime!= ''&&$lotNumber!=''&&$mixerNumber!= ''&&$rotateSpeed!= ''&&$totalCount!= ''&&$inspectors!= ''&&$totalTime!= ''&&$finDegree!= ''&&$visDegree!= '')
-            {
-                //项目类型插入数据库
-                $flag = DB::table('pvc_peiliao')
-                ->insert(
-                [
+            //     return Response::response(212,'保存失败：相应批号已存在',$number);
 
-                    'formDate'     => $formDate,
-                    'shift'     => $shift,
-                    'factory'     => $factory,
-                    'stirStartTime'     => $stirStartTime,
-                    'stirEndTime'     => $stirEndTime,
-                    'lotNumber'     => $lotNumber,
-                    'mixerNumber'     => $mixerNumber,
-                    'rotateSpeed'     => $rotateSpeed,
-                    'totalCount'     => $totalCount,
-                    'totalTime'     => $totalTime,
-                    'visDegree'     => $visDegree,
-                    'finDegree'     => $finDegree,
-                    'inspectors'     => $inspectors,
-                    'restStartTime'     => $restStartTime,
-                    'restTemperature'     => $restTemperature,
-                    'restStartOperator'     => $restStartOperator,
-                    'restEndTime'     => $restEndTime,
-                    'restEndOperator'     => $restEndOperator,
-                    'restShift'     => $restShift,
-                    'restTotalTime'     => $restTotalTime,
-                    'restTankNumber'     => $restTankNumber,
-                    'mixNumber2'     => $mixNumber2,
-                    'finalAuditor'     => $finalAuditor,
-                ]
-                );
 
-               	$peiliao = DB::table('pvc_peiliao')
-            	->select('id')
-            	->orderBy('id', 'DESC')
-                ->first();
-             	//原料数据遍历存储
-             	if($ylname!= ''){
-             		$flagname = DB::table('pvc_plname')
-		            ->insert(
-		            [
-		                'ylname'     => $ylname,
-		            ]
-					);
-             	}
-           		$num = count($ylData);
-           		 for($i=0;$i<$num;$i++){
+            // }else{
+                //判断是否为空
+                if($formDate!= ''&&$shift!= ''&&$factory!= ''&&$stirStartTime!= ''&&$stirEndTime!= ''&&$lotNumber!=''&&$mixerNumber!= ''&&$rotateSpeed!= ''&&$totalCount!= ''&&$inspectors!= ''&&$totalTime!= ''&&$finDegree!= ''&&$visDegree!= '')
+                {
+                    //项目类型插入数据库
+                    $flag = DB::table('pvc_peiliao')
+                    ->insert(
+                    [
 
-	   				//配料表ID
-	   				$plid = $peiliao->id;
-				    //原料名称
-	   				$rawName = $ylData[$i]['rawName'];
-	   				//原料批号
-	   				$lotNumber = $ylData[$i]['lotNumber'];
-	   				//投放时间
-	   				$startTime = $ylData[$i]['startTime'];
-	   				//结束时间
-	   				$endTime = $ylData[$i]['endTime'];
-	   				//投放数量
-	   				$deliveryCount = $ylData[$i]['deliveryCount'];
-	   				//配料员
-	   				$formulator = $ylData[$i]['formulator'];
-	   				//复核人
-	   				$reviewer = $ylData[$i]['reviewer'];
-	   			//数据存储
-	   			if($rawName!= ''&&$lotNumber!= ''&&$startTime!= ''&&$endTime!= ''&&$deliveryCount!= ''&&$formulator!= '')
-            	{
+                        'formDate'     => $formDate,
+                        'shift'     => $shift,
+                        'factory'     => $factory,
+                        'stirStartTime'     => $stirStartTime,
+                        'stirEndTime'     => $stirEndTime,
+                        'lotNumber'     => $lotNumber,
+                        'mixerNumber'     => $mixerNumber,
+                        'rotateSpeed'     => $rotateSpeed,
+                        'totalCount'     => $totalCount,
+                        'totalTime'     => $totalTime,
+                        'visDegree'     => $visDegree,
+                        'finDegree'     => $finDegree,
+                        'inspectors'     => $inspectors,
+                        'restStartTime'     => $restStartTime,
+                        'restTemperature'     => $restTemperature,
+                        'restStartOperator'     => $restStartOperator,
+                        'restEndTime'     => $restEndTime,
+                        'restEndOperator'     => $restEndOperator,
+                        'restShift'     => $restShift,
+                        'restTotalTime'     => $restTotalTime,
+                        'restTankNumber'     => $restTankNumber,
+                        'mixNumber2'     => $mixNumber2,
+                        'finalAuditor'     => $finalAuditor,
+                    ]
+                    );
 
-	                $flag1 = DB::table('pvc_yldata')
-	                ->insert(
-	                [
+                   	$peiliao = DB::table('pvc_peiliao')
+                	->select('id')
+                	->orderBy('id', 'DESC')
+                    ->first();
+                 	//原料数据遍历存储
+                 	if($ylname!= ''){
+                 		$flagname = DB::table('pvc_plname')
+                        ->insert(
+                        [
+                            'ylname'     => $ylname,
+                            'factory'     => $factory,//厂区
+                        ]
+                		);
+                 	}
+                    // 获取ID
+                    $ylnameId = DB::table('pvc_plname')
+                    ->select('id')
+                    ->orderBy('id', 'DESC')
+                    ->first();
+                	$num = count($ylData);
+                	 for($i=0;$i<$num;$i++){
 
-	                    'plid'     => $plid,
-	                    'rawName'     => $rawName,
-	                    'lotNumber'     => $lotNumber,
-	                    'startTime'     => $startTime,
-	                    'endTime'     => $endTime,
-	                    'deliveryCount'     => $deliveryCount,
-	                    'formulator'     => $formulator,
-	                    'reviewer'     => $reviewer,
-	                    'ylname'     => $ylname,//原料名称
+                		//配料表ID
+                		$plid = $peiliao->id;
+                	    //原料名称
+                		$rawName = $ylData[$i]['rawName'];
+                		//原料批号
+                		$lotNumber = $ylData[$i]['lotNumber'];
+                		//投放时间
+                		$startTime = $ylData[$i]['startTime'];
+                		//结束时间
+                		$endTime = $ylData[$i]['endTime'];
+                		//投放数量
+                		$deliveryCount = $ylData[$i]['deliveryCount'];
+                		//配料员
+                		$formulator = $ylData[$i]['formulator'];
+                		//复核人
+                		$reviewer = $ylData[$i]['reviewer'];
+                	//数据存储
+                	if($rawName!= ''&&$lotNumber!= ''&&$deliveryCount!= '')
+                	{
 
-	                ]
-					);
-            	}
-           		}
-           		//检测数据遍历存储
-           		$num2=count($det);
-           		 for($j=0;$j<$num2;$j++){
+                        $flag1 = DB::table('pvc_yldata')
+                        ->insert(
+                        [
 
-	   				//配料表ID
-	   				$plid = $peiliao->id;
-				    //原料名称
-	   				$detTime= $det[$j]['dettime'];
-	   				//原料批号
-	   				$detTemperature= $det[$j]['detTemperature'];
-	   			//数据存储
-	   			if($detTime!= ''&&$detTemperature!= '')
-            	{
+                            'plid'     => $plid,
+                            'rawName'     => $rawName,
+                            'lotNumber'     => $lotNumber,
+                            // 'startTime'     => $startTime,
+                            // 'endTime'     => $endTime,
+                            'deliveryCount'     => $deliveryCount,
+                            // 'formulator'     => $formulator,
+                            // 'reviewer'     => $reviewer,
+                            // 'ylname'     => $ylname,
+                            'ylname'     => $ylnameId->id,//原料名称
 
-                $flag2 = DB::table('pvc_detdata')
-                ->insert(
-                [
 
-                    'plid'     => $plid,
-                    'detTime'     => $detTime,
-                    'detTemperature'     => $detTemperature,
-                ]
-				);
-            	}
-           		}
-           		$yuanliao = DB::table('pvc_yldata')
-            	->where('plid',$peiliao->id)
-            	->get()
-           		->toArray();
-           		$tem = DB::table('pvc_detdata')
-            	->where('plid',$peiliao->id)
-            	->get()
-           		->toArray();
-           		$peiliao2 = DB::table('pvc_peiliao')
-            	->where('id',$peiliao->id)
-            	->get()
-           		->first();
+                        ]
+                		);
+                	}
+                	}
+                	//检测数据遍历存储
+                	$num2=count($det);
+                	 for($j=0;$j<$num2;$j++){
 
-				$pl=array($peiliao2,$yuanliao,$tem);
+                		//配料表ID
+                		$plid = $peiliao->id;
+                	    //原料名称
+                		$detTime= $det[$j]['dettime'];
+                		//原料批号
+                		$detTemperature= $det[$j]['detTemperature'];
+                	//数据存储
+                	if($detTime!= '')
+                	{
 
-                Log::info('配料表新增数据');
-                return Response::response(200,'保存成功',$pl);
-            }
-            else
-            {
-                return Response::response(211,'保存失败：缺少必要参数');
-            }
+                    $flag2 = DB::table('pvc_detdata')
+                    ->insert(
+                    [
+
+                        'plid'     => $plid,
+                        'detTime'     => $detTime,
+                        'detTemperature'     => $detTemperature,
+                    ]
+                	);
+                	}
+                	}
+                	$yuanliao = DB::table('pvc_yldata')
+                	->where('plid',$peiliao->id)
+                	->get()
+                	->toArray();
+                	$tem = DB::table('pvc_detdata')
+                	->where('plid',$peiliao->id)
+                	->get()
+                	->toArray();
+                	$peiliao2 = DB::table('pvc_peiliao')
+                	->where('id',$peiliao->id)
+                	->get()
+                	->first();
+
+                	$pl=array($peiliao2,$yuanliao,$tem);
+
+                    Log::info('配料表新增数据');
+                    return Response::response(200,'保存成功',$pl);
+                }
+                else
+                {
+                    return Response::response(211,'保存失败：缺少必要参数');
+                }
+            // }
         }
         catch (Exception $e)
         {
@@ -553,17 +599,18 @@ class PvcplController extends Controller
 				);
            		};
            		//原料检测数据遍历存储
-           		$idtem = DB::table('pvc_yldata')
+           		$idtem = DB::table('pvc_detdata')
            		->select('id')
             	->where('plid',$id)
             	->get()
            		->toArray();
 
            		$num2=count($det);
+                if($idtem){
            		 for($j=0;$j<$num2;$j++){
 
 				    //原料名称
-	   				$detTime= $det[$j]['dettime'];
+	   				$detTime= $det[$j]['detTime'];
 	   				//原料批号
 	   				$detTemperature= $det[$j]['detTemperature'];
 	   			//数据更新
@@ -572,11 +619,40 @@ class PvcplController extends Controller
                 ->update(
                 [
 
-                    'dettime'     => $detTime,
+                    'detTime'     => $detTime,
                     'detTemperature'     => $detTemperature,
                 ]
 				);
            		}
+
+                }else{
+                 for($j=0;$j<$num2;$j++){
+
+                	//配料表ID
+                	$plid = $id;
+                    //原料名称
+                	$detTime= $det[$j]['detTime'];
+                	//原料批号
+                	$detTemperature= $det[$j]['detTemperature'];
+                //数据存储
+                if($detTime!= '')
+                {
+
+                $flag2 = DB::table('pvc_detdata')
+                ->insert(
+                [
+
+                    'plid'     => $plid,
+                    'detTime'     => $detTime,
+                    'detTemperature'     => $detTemperature,
+                ]
+                );
+                }
+                }
+
+                }
+
+
 				$peiliao = DB::table('pvc_peiliao')
             	->where('id',$id)
             	->get()
@@ -589,8 +665,8 @@ class PvcplController extends Controller
             	->where('plid',$id)
             	->get()
            		->toArray();
-           		
-           		
+
+
            		$pl=array($peiliao,$yuanliao,$tem);
 
 

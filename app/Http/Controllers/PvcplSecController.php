@@ -335,7 +335,7 @@ class PvcplSecController extends Controller
 	   				$description = $ylData[$i]['description'];
 
 	   			//数据存储
-	   			if($rawName!= '')
+	   			if($rawName!= ''&&$lotNumber!= ''&&$deliveryCount!= '')
             	{
 
 	                $flag1 = DB::table('yldata_second')

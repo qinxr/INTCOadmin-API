@@ -79,7 +79,10 @@ Route::post('pad/backPad','PadController@backPad');
 
 //配料信息接口
 //获取展示列表信息
+//时间倒序
 Route::get('pladmin/getPlInfos/{factory}','PvcplController@getPlInfos');
+//时间正序
+Route::get('pladmin/getPlInfosAsc/{factory}','PvcplController@getPlInfosAsc');
 //增
 Route::post('pladmin/addPlInfo','PvcplController@addPlInfo');
 //查指定id
@@ -87,9 +90,9 @@ Route::post('pladmin/getPlAsId/{id}','PvcplController@getPlAsId');
 //改
 Route::post('pladmin/editpl/{id}','PvcplController@editpl');
 //获取配方表名称信息
-Route::get('pladmin/getPlnames','PvcplController@getPlnames');
+Route::get('pladmin/getPlnames/{factory}','PvcplController@getPlnames');
 //查指定名称
-Route::post('pladmin/getPlAsName/{name}','PvcplController@getPlAsName');
+Route::post('pladmin/getPlAsName/{id}','PvcplController@getPlAsName');
 
 
 //二次配料信息接口
